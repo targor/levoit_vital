@@ -1,16 +1,13 @@
-# if you have more than one air purifier, it is best to rename all 3 entries:
-# esphome->name
-# api->id
-# levoitvital->id
+#I added the mac suffix, with this in use, there is no need to use diffeent ids for every device anymore.
 
 esphome:
-  name: "levoitvital1"
+  name: "levoitvital"
+  name_add_mac_suffix: true # using this, there is no need to set a new name for every new device. id is automatically used in combination with devices mac.
   # only use long names if you really are sure, as this will extend the name of all entities for this device in homeassistant (e.g. Levoit air purifier Vital200S(P) - Fan level).
   friendly_name: " " #Levoit air purifier Vital200S(P)
 
-
 api:
-  id: vital1 
+  id: vital
 ota:
   platform: esphome
   #password: !secret ota_password
@@ -18,7 +15,6 @@ ota:
 levoitvital:
   id: levoitvital1
   model: "VITAL200S"
-
 
 #config for the vital200S(and also the pro variant) (esp32-c3-solo-1), maybe this also works for the S100 but i do not have this device so i could not test (dieassemble it) yet.
 esp32:
@@ -67,7 +63,6 @@ esp32:
 #   mode: quad  # quad for N8R2 and octal for N16R8
 #   speed: 80MHz
 
-
 #use this for use with git
 external_components:
   - source: github://targor/levoit_vital
@@ -75,8 +70,8 @@ external_components:
 
 # use this for local development
 #external_components:
-#   - source: "./components/"
-#     components: [levoitvital]
+   #- source: "./components/"
+   #  components: [levoitvital]
 
 logger:
   level: DEBUG
@@ -95,19 +90,17 @@ wifi:
 
 captive_portal:
 
-
 #for vital200s (esp32-c3-solo-1)
 uart:
-  tx_pin: GPIO19 
+  tx_pin: GPIO19
   rx_pin: GPIO18
   baud_rate: 115200
 
 # for esp32-s3-wroom-1
 # uart:
-#   tx_pin: GPIO17 
+#   tx_pin: GPIO17
 #   rx_pin: GPIO18
 #   baud_rate: 115200
-
 
 # please only reconfigre this if you know what you are doing and maybe want to alter the source code.
 #https://www.home-assistant.io/integrations/sensor#device-class
@@ -130,12 +123,13 @@ text_sensor:
     airquality_level:
       name: "Airquality"
     display_state:
-      name: "display state"
-      
+      name: "Display state"
+    device_fw_version_text:
+      name: "Device version"
 
 number:
   - platform: levoitvital
-    efficient_num: 
+    efficient_num:
       name: "Efficient mode value"
 
 switch:

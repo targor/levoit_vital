@@ -60,6 +60,7 @@ namespace esphome
             // textsensors
             LevoitTextSensor *airquality_level;
             LevoitTextSensor *display_state;
+            LevoitTextSensor *device_fw_version_text;
 
             // number
             LevoitNumber *efficient_num;

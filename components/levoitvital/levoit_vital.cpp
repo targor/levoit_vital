@@ -111,6 +111,11 @@ namespace esphome
                 this->display_state = sensor;
                 break;
             }
+            case DEVICE_FW_VERSION_TEXT:
+            {
+                this->device_fw_version_text = sensor;
+                break;
+            }
             }
         }
 
@@ -132,6 +137,7 @@ namespace esphome
             ESP_LOGI(TAG, "Setting up Levoit %s", model_ == VITAL200S ? "VITAL200S" : "NONE");
             Vital200Settings::getInstance().init();
             srand((unsigned int)time(NULL));
+            this->device_fw_version_text->publish_state("1.0.1");
         }
 
         /// @brief The main loop, that is triggeed by the esphome framework automatically
@@ -415,7 +421,6 @@ namespace esphome
                     checkValChanged(settings.dayTime.turnOffOnDayTime, "SleepModeDayTime-turnOffOnDayTime", msg[107]);
                     /************************************ */
 
-
                     settings.initialized = true;
                 }
             }
@@ -429,10 +434,9 @@ namespace esphome
             }
         }
 
-
-        /// @brief Sends the commands depending on its type. long method but plain simple. 
+        /// @brief Sends the commands depending on its type. long method but plain simple.
         /// There are some extra bytes that i did not understand completely, but it works so far :).
-        /// @param commandType 
+        /// @param commandType
         void LevoitVital::sendCommand(CommandType commandType)
         {
             auto &settings = Vital200Settings::getInstance();

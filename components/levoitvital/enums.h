@@ -29,7 +29,8 @@ namespace esphome
         enum LevoitTextSensorPurpose : uint8_t
         {
             AIRQUALITY_LEVEL,
-            DISPLAY_STATE
+            DISPLAY_STATE,
+            DEVICE_FW_VERSION_TEXT
         };
 
         enum LevoitNumberPurpose : uint8_t
