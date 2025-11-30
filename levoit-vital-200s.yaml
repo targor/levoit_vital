@@ -66,6 +66,7 @@ esp32:
 #use this for use with git
 external_components:
   - source: github://targor/levoit_vital
+    refresh: 0d # optional
     components: [levoitvital]
 
 # use this for local development
