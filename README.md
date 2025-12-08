@@ -58,4 +58,72 @@ I Used an older USB to Serial Adapter and could not backup with full Speed. If o
 
 
 
+## Optional fan integration
 
+If you want you can add this template to your home assitant to enable the fan power and level as a Homeassistant fan.
+Thanks to Scags104 for the suggestion.
+
+ids and names should be modified accordingly.
+
+- fan:
+  - unique_id: brap22_fan 
+    name: "BRAP22 Fan"
+    state: "{{ states('switch.brap22_power') }}"
+    percentage: >-
+      {% if is_state('switch.brap22_power', 'on') %}
+        {% set level = states('select.brap22_fanlevel') | int(0) %}
+        {{ level * 25 if level in [1,2,3,4] else 0 }}
+      {% else %}
+        0
+      {% endif %}
+    preset_mode: >-
+      {% if is_state('switch.brap22_power', 'on') %}
+        {{ states('select.brap22_fanmode') }}
+      {% else %}
+        None
+      {% endif %}
+    preset_modes:
+      - "Manual"
+      - "Automatic"
+      - "Sleep"
+      - "Pet"
+    speed_count: 4
+    optimistic: true
+    turn_on:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.brap22_power
+      - service: select.select_option
+        target:
+          entity_id: select.brap22_fanmode
+        data:
+          option: "Manual"
+      - service: select.select_option
+        target:
+          entity_id: select.brap22_fanlevel
+        data:
+          option: "1"
+    turn_off:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.brap22_power
+    set_percentage:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.brap22_power
+      - service: select.select_option
+        target:
+          entity_id: select.brap22_fanlevel
+        data:
+          option: >-
+            {% set pct = percentage | int %}
+            {{ 1 if pct <= 25 else 2 if pct <= 50 else 3 if pct <= 75 else 4 }}
+    set_preset_mode:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.brap22_power
+      - service: select.select_option
+        target:
+          entity_id: select.brap22_fanmode
+        data:
+          option: "{{ preset_mode }}"
