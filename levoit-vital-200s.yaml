@@ -10,7 +10,7 @@ esphome:
   #platformio_options:
   #  board_build.flash_mode: dio
   #  board_build.flash_freq: 40m
-  
+
 api:
   id: vital
 ota:
@@ -107,6 +107,76 @@ uart:
 #   tx_pin: GPIO17
 #   rx_pin: GPIO18
 #   baud_rate: 115200
+
+
+
+# optional FAN integration
+# If this section is enabled the device will also show up as a FAN. Not all settings are configurable with it tho.
+# Thanks to Scags104 for the suggestion.
+# id and name should be modified to use more than one fan per device.
+# fan:
+#   - unique_id: brap22_fan 
+#     name: "BRAP22 Fan"
+#     state: "{{ states('switch.brap22_power') }}"
+#     percentage: >-
+#       {% if is_state('switch.brap22_power', 'on') %}
+#         {% set level = states('select.brap22_fanlevel') | int(0) %}
+#         {{ level * 25 if level in [1,2,3,4] else 0 }}
+#       {% else %}
+#         0
+#       {% endif %}
+#     preset_mode: >-
+#       {% if is_state('switch.brap22_power', 'on') %}
+#         {{ states('select.brap22_fanmode') }}
+#       {% else %}
+#         None
+#       {% endif %}
+#     preset_modes:
+#       - "Manual"
+#       - "Automatic"
+#       - "Sleep"
+#       - "Pet"
+#     speed_count: 4
+#     optimistic: true
+#     turn_on:
+#       - service: switch.turn_on
+#         target:
+#           entity_id: switch.brap22_power
+#       - service: select.select_option
+#         target:
+#           entity_id: select.brap22_fanmode
+#         data:
+#           option: "Manual"
+#       - service: select.select_option
+#         target:
+#           entity_id: select.brap22_fanlevel
+#         data:
+#           option: "1"
+#     turn_off:
+#       - service: switch.turn_off
+#         target:
+#           entity_id: switch.brap22_power
+#     set_percentage:
+#       - service: switch.turn_on
+#         target:
+#           entity_id: switch.brap22_power
+#       - service: select.select_option
+#         target:
+#           entity_id: select.brap22_fanlevel
+#         data:
+#           option: >-
+#             {% set pct = percentage | int %}
+#             {{ 1 if pct <= 25 else 2 if pct <= 50 else 3 if pct <= 75 else 4 }}
+#     set_preset_mode:
+#       - service: switch.turn_on
+#         target:
+#           entity_id: switch.brap22_power
+#       - service: select.select_option
+#         target:
+#           entity_id: select.brap22_fanmode
+#         data:
+#           option: "{{ preset_mode }}"
+
 
 # please only reconfigre this if you know what you are doing and maybe want to alter the source code.
 #https://www.home-assistant.io/integrations/sensor#device-class
