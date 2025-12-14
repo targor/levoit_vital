@@ -116,6 +116,11 @@ namespace esphome
                 this->device_fw_version_text = sensor;
                 break;
             }
+            case REPLACE_AIRFILTER:
+            {
+                this->replace_airfilter = sensor;
+                break;
+            }
             }
         }
 
@@ -137,7 +142,7 @@ namespace esphome
             ESP_LOGI(TAG, "Setting up Levoit %s", model_ == VITAL200S ? "VITAL200S" : "NONE");
             Vital200Settings::getInstance().init();
             srand((unsigned int)time(NULL));
-            this->device_fw_version_text->publish_state("1.0.1");
+            this->device_fw_version_text->publish_state("1.0.2");
         }
 
         /// @brief The main loop, that is triggeed by the esphome framework automatically
@@ -213,13 +218,13 @@ namespace esphome
                 write_array(data, len2);
                 this->flush();
 
+                // for debugging.
+                log_hex(msg,len);
+
                 // Reads settings. Message must have at least 113 bytes to read all current known settings.
-                // Checks for changed states and updates all sensors,switches,numbers and so on.
+                // Checks for changed states and updates all sensors,switches,numbers and so on.               
                 if (len >= 113)
                 {
-
-                    // for debugging.
-                    // log_hex(msg,len);
                     auto &settings = Vital200Settings::getInstance();
 
                     std::uint8_t countUp = msg[2];   // not processed (also currently no need to process as this is the secondary chip counter)
@@ -248,6 +253,19 @@ namespace esphome
                         if (settings.displayOnOffState2 == 1 && settings.displayOnOffState == 1)
                         {
                             this->display_state->publish_state("The display is illuminated");
+                        }
+                    }
+
+                    if (this->display_switch && checkValChanged(settings.airfilter_state, "airfilter_state", msg[38]))
+                    {
+                        switch (settings.airfilter_state)
+                        {
+                            case 0:
+                                this->replace_airfilter->publish_state("Filter is ok.");
+                                break;
+                            case 1:
+                                this->replace_airfilter->publish_state("Filter must be replaced.");
+                                break;
                         }
                     }
 

@@ -10,6 +10,7 @@ DEPENDENCIES = ["levoitvital"]
 CONF_AIRQUALITY_LEVEL = "airquality_level"
 CONF_DISPLAY_STATE = "display_state"
 CONF_DEVICE_FW_VERSION_TEXT = "device_fw_version_text"
+CONF_REPLACE_AIRFILTER = "replace_airfilter"
 
 LevoitTextSensor = levoit_vital_ns.class_(
     "LevoitTextSensor", text_sensor.TextSensor, cg.Component
@@ -32,6 +33,11 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_DEVICE_FW_VERSION_TEXT): text_sensor.text_sensor_schema(
             LevoitTextSensor, icon=ICON_WEATHER_WINDY
         ).extend(cv.COMPONENT_SCHEMA),
+
+        cv.Optional(CONF_REPLACE_AIRFILTER): text_sensor.text_sensor_schema(
+            LevoitTextSensor, icon=ICON_WEATHER_WINDY
+        ).extend(cv.COMPONENT_SCHEMA),
+
     }
 )
 
@@ -59,3 +65,10 @@ async def to_code(config):
         )
         cg.add(parent.set_text_sensor(var, LevoitTextSensorPurpose.DEVICE_FW_VERSION_TEXT))
         await cg.register_component(var, config_device_fw_version_text)
+
+    if replace_airfilter := config.get(CONF_REPLACE_AIRFILTER):
+        var = await text_sensor.new_text_sensor(
+            replace_airfilter, parent, LevoitTextSensorPurpose.REPLACE_AIRFILTER
+        )
+        cg.add(parent.set_text_sensor(var, LevoitTextSensorPurpose.REPLACE_AIRFILTER))
+        await cg.register_component(var, replace_airfilter)

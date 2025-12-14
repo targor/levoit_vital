@@ -28,6 +28,7 @@ public:
     std::uint8_t displayLock;        // 0=off, 1=on
     std::uint8_t lightDetection;     // 0=off, 1=on
     std::uint8_t sleepMode;          // 0=default, 1=custom
+    std::uint8_t airfilter_state;    // 0 = clean, 1 = must be replaced
 
     // Sleep Modes
     struct SleepModeQuickClean
@@ -72,6 +73,7 @@ public:
         displayLock = 255;
         lightDetection = 255;
         sleepMode = 255;
+        airfilter_state=255;
 
         quickClean.fanLevel = 255;      // default is 4
         quickClean.timeInMinutes = 255; // default is 5

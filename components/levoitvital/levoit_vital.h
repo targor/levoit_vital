@@ -61,6 +61,7 @@ namespace esphome
             LevoitTextSensor *airquality_level;
             LevoitTextSensor *display_state;
             LevoitTextSensor *device_fw_version_text;
+            LevoitTextSensor *replace_airfilter;
 
             // number
             LevoitNumber *efficient_num;

@@ -30,7 +30,8 @@ namespace esphome
         {
             AIRQUALITY_LEVEL,
             DISPLAY_STATE,
-            DEVICE_FW_VERSION_TEXT
+            DEVICE_FW_VERSION_TEXT,
+            REPLACE_AIRFILTER
         };
 
         enum LevoitNumberPurpose : uint8_t

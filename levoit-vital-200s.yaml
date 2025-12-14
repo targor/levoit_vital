@@ -76,13 +76,27 @@ external_components:
 
 # use this for local development
 #external_components:
-   #- source: "./components/"
-   #  components: [levoitvital]
+#   - source: "./components/"
+#     components: [levoitvital]
 
 logger:
   level: DEBUG
   baud_rate: 115200
   hardware_uart: UART0
+#use this for debugging
+#mqtt:
+#  broker: yout ip here
+#  port: 1883
+#  discovery: true
+#  username: !secret mqtt_username
+#  password: !secret mqtt_password
+#  log_topic: "zigbee2mqtt/airpurifier/log"
+#  birth_message:
+#    topic: "zigbee2mqtt/airpurifier/log"
+#    payload: "online"
+#    qos: 1
+#    retain: true
+
 
 wifi:
   ssid: !secret wifi_ssid
@@ -133,6 +147,8 @@ text_sensor:
       name: "Display state"
     device_fw_version_text:
       name: "Device version"
+    replace_airfilter:
+      name: "Airfilter"
 
 number:
   - platform: levoitvital
