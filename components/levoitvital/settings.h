@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include "enums.h"
+#include "esphome/core/preferences.h"
 
 class Vital200Settings
 {
@@ -29,6 +30,7 @@ public:
     std::uint8_t lightDetection;     // 0=off, 1=on
     std::uint8_t sleepMode;          // 0=default, 1=custom
     std::uint8_t airfilter_state;    // 0 = clean, 1 = must be replaced
+    std::uint16_t powerModeValue;    // time in minutes for the poewer mode (this is a cusom functionality from me, and not part of levoit)
 
     // Sleep Modes
     struct SleepModeQuickClean
@@ -73,7 +75,11 @@ public:
         displayLock = 255;
         lightDetection = 255;
         sleepMode = 255;
-        airfilter_state=255;
+        airfilter_state = 255;
+        powerModeValue = 30;
+
+        auto pref = esphome::global_preferences->make_preference<int>(1);
+        pref.load(&powerModeValue);
 
         quickClean.fanLevel = 255;      // default is 4
         quickClean.timeInMinutes = 255; // default is 5
@@ -87,6 +93,12 @@ public:
         dayTime.turnOffOnDayTime = 255; // default is 0
         dayTime.fanLevel = 255;         // default is 2
         dayTime.fanMode = 255;          // default is 1
+    }
+
+    void save()
+    {
+        auto pref = esphome::global_preferences->make_preference<int>(1);
+        pref.save(&powerModeValue);
     }
 
 private:

@@ -16,6 +16,7 @@ namespace esphome
         class LevoitSensor;     // forward declaration to prevent errors when including sensor
         class LevoitTextSensor; // forward declaration to prevent errors when including textsensor
         class LevoitNumber;     // forward declaration to prevent errors when including number
+        class LevoitButton;  
 
         enum ModelType
         {
@@ -40,6 +41,7 @@ namespace esphome
             void set_sensor(LevoitSensor *sensor, LevoitSensorPurpose purpose);
             void set_text_sensor(LevoitTextSensor *sensor, LevoitTextSensorPurpose purpose);
             void set_number(LevoitNumber *number, LevoitNumberPurpose purpose);
+            void set_button(LevoitButton *button, LevoitButtonPurpose purpose);
             void sendCommand(CommandType commandType);
 
             // switches
@@ -65,6 +67,10 @@ namespace esphome
 
             // number
             LevoitNumber *efficient_num;
+            LevoitNumber *powermode_time;
+
+            //button
+            LevoitButton *powermode;
 
         protected:
             // variables
@@ -73,6 +79,7 @@ namespace esphome
             int buf_len_ = 0;
             uint32_t last_byte_time = 0;
             ModelType model_;
+            bool timer_active_ = false;
 
             // functions
             void process_message(std::uint8_t *msg, int len);

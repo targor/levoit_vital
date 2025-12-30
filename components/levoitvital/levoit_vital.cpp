@@ -8,6 +8,7 @@
 #include "select/levoit_vital_select.h"
 #include "sensor/levoit_vital_sensor.h"
 #include "number/levoit_vital_number.h"
+#include "button/levoit_vital_button.h"
 #include "text_sensor/levoit_vital_text_sensor.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/text_sensor/text_sensor.h"
@@ -133,6 +134,23 @@ namespace esphome
                 this->efficient_num = number;
                 break;
             }
+            case POWERMODE_TIME:
+            {
+                this->powermode_time = number;
+                break;
+            }
+            }
+        }
+
+        void LevoitVital::set_button(LevoitButton *button, LevoitButtonPurpose purpose)
+        {
+            switch (purpose)
+            {
+            case POWERMODE:
+            {
+                this->powermode = button;
+                break;
+            }
             }
         }
         /* end defining yaml setters */
@@ -141,8 +159,12 @@ namespace esphome
         {
             ESP_LOGI(TAG, "Setting up Levoit %s", model_ == VITAL200S ? "VITAL200S" : "NONE");
             Vital200Settings::getInstance().init();
+ 
+            auto &settings = Vital200Settings::getInstance();
+            this->powermode_time->publish_state(settings.powerModeValue);
+
             srand((unsigned int)time(NULL));
-            this->device_fw_version_text->publish_state("1.0.2");
+            this->device_fw_version_text->publish_state("1.0.3");
         }
 
         /// @brief The main loop, that is triggeed by the esphome framework automatically
@@ -219,10 +241,10 @@ namespace esphome
                 this->flush();
 
                 // for debugging.
-                log_hex(msg,len);
+                log_hex(msg, len);
 
                 // Reads settings. Message must have at least 113 bytes to read all current known settings.
-                // Checks for changed states and updates all sensors,switches,numbers and so on.               
+                // Checks for changed states and updates all sensors,switches,numbers and so on.
                 if (len >= 113)
                 {
                     auto &settings = Vital200Settings::getInstance();
@@ -260,12 +282,12 @@ namespace esphome
                     {
                         switch (settings.airfilter_state)
                         {
-                            case 0:
-                                this->replace_airfilter->publish_state("Filter is ok.");
-                                break;
-                            case 1:
-                                this->replace_airfilter->publish_state("Filter must be replaced.");
-                                break;
+                        case 0:
+                            this->replace_airfilter->publish_state("Filter is ok.");
+                            break;
+                        case 1:
+                            this->replace_airfilter->publish_state("Filter must be replaced.");
+                            break;
                         }
                     }
 
@@ -457,6 +479,13 @@ namespace esphome
         /// @param commandType
         void LevoitVital::sendCommand(CommandType commandType)
         {
+
+            if (this->timer_active_)
+            {
+                this->cancel_timeout("delayed_action");
+                this->timer_active_=false;
+            }
+
             auto &settings = Vital200Settings::getInstance();
             if (!settings.initialized)
             {
@@ -713,6 +742,20 @@ namespace esphome
                 cmdValue = 0x02;
                 extraBytes = {0x02, 0x02, 0x7D, 0x02, 0x03, 0x02, 0x7D, 0x00, 0x04, 0x01, 0x00};
                 break;
+            }
+            case setPowerMode:
+            {
+                if (this->timer_active_)
+                {
+                    this->cancel_timeout("delayed_action");
+                }
+
+                this->timer_active_=true;
+                this->sendCommand(setDeviceFanLvl4);
+                this->set_timeout("delayed_action", (settings.powerModeValue * 60 * 1000), [this]()
+                                { this->sendCommand(setFanModeAuto); });
+                
+                return;
             }
             }
 

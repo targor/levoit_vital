@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import uart, switch
 from esphome.const import CONF_ID
 
-DEPENDENCIES = ["uart", "sensor", "text_sensor", "switch", "select"]
+DEPENDENCIES = ["uart", "sensor", "text_sensor", "switch", "select","button"]
 CODEOWNERS = ["@Targor"]
 CONF_LEVOIT_MODEL = "model"
 CONF_LABELS = "labels"

@@ -154,6 +154,8 @@ number:
   - platform: levoitvital
     efficient_num:
       name: "Efficient mode value"
+    powermode_time:
+      name: "Powermode time"
 
 switch:
   - platform: levoitvital
@@ -165,6 +167,11 @@ switch:
       name: "Display lock"
     display:
       name: "Display"
+
+button:
+  - platform: levoitvital
+    powermode:
+      name: "Powermode"
 
 select:
   - platform: levoitvital

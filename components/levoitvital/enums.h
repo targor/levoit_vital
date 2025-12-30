@@ -34,9 +34,15 @@ namespace esphome
             REPLACE_AIRFILTER
         };
 
+        enum LevoitButtonPurpose : uint8_t
+        {
+            POWERMODE
+        };
+
         enum LevoitNumberPurpose : uint8_t
         {
-            EFFICIENT_NUM
+            EFFICIENT_NUM,
+            POWERMODE_TIME
         };
 
         // used fo sending different commands
@@ -66,7 +72,8 @@ namespace esphome
             resetFilter, // use with care, the filter value is stored in the SC95F8617/ chip and cannot be manipulated
             setWifiLedOn,
             setWifiLedOff,
-            setWifiLedBlinking
+            setWifiLedBlinking,
+            setPowerMode
         } CommandType;
 
         // used fo logs
@@ -95,6 +102,8 @@ namespace esphome
             "resetFilter", // use with care, the filter value is stored in the SC95F8617/ chip and cannot be manipulated
             "setWifiLedOn",
             "setWifiLedOff",
-            "setWifiLedBlinking"};
+            "setWifiLedBlinking",
+            "powerMode"
+        };
     }
 }
