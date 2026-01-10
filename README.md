@@ -1,10 +1,9 @@
 # Levoit Vital Esphome component
 
-Esphome component for the Levoit Vital **200S** and **200S pro**, maybe also works for **100S**.
+Esphome component for the Levoit Vital **200S**, **200S pro** and **100S**.
 
 As there was no component or firmware or anything for the Levoit Vital 200S i reverse engineered most of the protocol and made a esphome componend to use.
 - This should also work with the Levoit Vital 200S Pro, as (i asked the manufacturer) the pro version is the exact same device but in another color.
-- Also this component maybe work with the Levoit Vital 100S, as they seem pretty similar. But i can not guarantee it, i do not have this device. If you have it, please try and tell me if it wokrs.
 - If you want to go deeper, i provided my current reverse engineering data ([command table.xlsx](https://github.com/user-attachments/files/23830099/command.table.xlsx)).
 
 
