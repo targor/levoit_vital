@@ -23,7 +23,8 @@ namespace esphome
         enum LevoitSensorPurpose : uint8_t
         {
             PARTICLE_DENSITY,
-            AIRQUALITY_SCORE
+            AIRQUALITY_SCORE,
+            AIR_QUALITY_INDEX
         };
 
         enum LevoitTextSensorPurpose : uint8_t

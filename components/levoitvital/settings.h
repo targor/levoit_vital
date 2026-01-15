@@ -26,6 +26,7 @@ public:
     std::uint8_t airQualityLevel;    // 1=very good..4=bad
     std::uint8_t particleDensity;    // 0-254
     std::uint8_t airQualityScore;    // 0 to 100
+    std::uint16_t airQualityIndex;   // 0-500 AQI
     std::uint8_t displayLock;        // 0=off, 1=on
     std::uint8_t lightDetection;     // 0=off, 1=on
     std::uint8_t sleepMode;          // 0=default, 1=custom
@@ -72,6 +73,7 @@ public:
         airQualityLevel = 255;
         particleDensity = 255;
         airQualityScore = 255;
+        airQualityIndex = 65535; // Initialize to max uint16_t
         displayLock = 255;
         lightDetection = 255;
         sleepMode = 255;

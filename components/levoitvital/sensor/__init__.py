@@ -9,6 +9,7 @@ DEPENDENCIES = ["levoitvital"]
 
 CONF_PARTICLE_DENSITY = "particle_density"
 CONF_AIRQUALITY_SCORE = "airquality_score"
+CONF_AIR_QUALITY_INDEX = "air_quality_index"
 
 LevoitSensor = levoit_vital_ns.class_("LevoitSensor", sensor.Sensor, cg.Component)
 LevoitSensorPurpose = levoit_vital_ns.enum("LevoitSensorPurpose")
@@ -21,6 +22,9 @@ CONFIG_SCHEMA = cv.Schema(
             LevoitSensor, icon=ICON_WEATHER_WINDY
         ).extend(cv.COMPONENT_SCHEMA),
         cv.Optional(CONF_AIRQUALITY_SCORE): sensor.sensor_schema(
+            LevoitSensor, icon=ICON_AIR_FILTER
+        ).extend(cv.COMPONENT_SCHEMA),
+        cv.Optional(CONF_AIR_QUALITY_INDEX): sensor.sensor_schema(
             LevoitSensor, icon=ICON_AIR_FILTER
         ).extend(cv.COMPONENT_SCHEMA),
     }
@@ -43,3 +47,10 @@ async def to_code(config):
         )
         cg.add(parent.set_sensor(var, LevoitSensorPurpose.AIRQUALITY_SCORE))
         await cg.register_component(var, config_airquality_score)
+
+    if config_air_quality_index := config.get(CONF_AIR_QUALITY_INDEX):
+        var = await sensor.new_sensor(
+            config_air_quality_index, parent, LevoitSensorPurpose.AIR_QUALITY_INDEX
+        )
+        cg.add(parent.set_sensor(var, LevoitSensorPurpose.AIR_QUALITY_INDEX))
+        await cg.register_component(var, config_air_quality_index)

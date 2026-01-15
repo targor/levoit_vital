@@ -95,6 +95,11 @@ namespace esphome
                 this->airquality_score = sensor;
                 break;
             }
+            case AIR_QUALITY_INDEX:
+            {
+                this->air_quality_index = sensor;
+                break;
+            }
             }
         }
 
@@ -393,6 +398,11 @@ namespace esphome
                     if (this->particle_density && checkValChanged(settings.particleDensity, "particleDensity", msg[47]))
                     {
                         this->particle_density->publish_state(settings.particleDensity);
+                        if (this->air_quality_index)
+                        {
+                            settings.airQualityIndex = calculateAQI(settings.particleDensity);
+                            this->air_quality_index->publish_state(settings.airQualityIndex);
+                        }
                     }
 
                     if (this->airquality_score && checkValChanged(settings.airQualityScore, "airQualityScore", msg[44]))

@@ -115,3 +115,50 @@ inline bool checkValChanged16(std::uint16_t &value, const char *fieldName, std::
     }
     return false;
 }
+
+/// @brief Calculates the Air Quality Index (AQI) from PM2.5 concentration using EPA breakpoints.
+/// @param pm25 PM2.5 concentration in µg/m³
+/// @return AQI value (0-500)
+inline int calculateAQI(float pm25)
+{
+    if (pm25 < 0) return 0;
+    
+    // EPA PM2.5 breakpoints (µg/m³)
+    const float breakpoints[7][2] = {
+        {0.0, 12.0},    // 0-50 AQI
+        {12.1, 35.4},   // 51-100 AQI
+        {35.5, 55.4},   // 101-150 AQI
+        {55.5, 150.4},  // 151-200 AQI
+        {150.5, 250.4}, // 201-300 AQI
+        {250.5, 350.4}, // 301-400 AQI
+        {350.5, 500.4}  // 401-500 AQI
+    };
+    
+    const int aqi_ranges[7][2] = {
+        {0, 50},
+        {51, 100},
+        {101, 150},
+        {151, 200},
+        {201, 300},
+        {301, 400},
+        {401, 500}
+    };
+    
+    // Find the appropriate breakpoint
+    for (int i = 0; i < 7; i++) {
+        if (pm25 <= breakpoints[i][1]) {
+            if (i == 0 && pm25 < breakpoints[0][0]) return 0;
+            
+            float conc_low = (i == 0) ? 0 : breakpoints[i][0];
+            float conc_high = breakpoints[i][1];
+            int aqi_low = aqi_ranges[i][0];
+            int aqi_high = aqi_ranges[i][1];
+            
+            // Linear interpolation
+            return (int)((aqi_high - aqi_low) / (conc_high - conc_low) * (pm25 - conc_low) + aqi_low + 0.5);
+        }
+    }
+    
+    // Above 500.4 µg/m³
+    return 500;
+}

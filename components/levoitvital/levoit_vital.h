@@ -58,6 +58,7 @@ namespace esphome
             // number sensors
             LevoitSensor *particle_density;
             LevoitSensor *airquality_score;
+            LevoitSensor *air_quality_index;
 
             // textsensors
             LevoitTextSensor *airquality_level;

@@ -26,7 +26,7 @@ esp32:
   board: esp32-c3-devkitm-1
   variant: esp32c3
   flash_size: 4MB
-  cpu_frequency: 160Mhz
+  # cpu_frequency: 160Mhz
   framework:
     type: esp-idf
     sdkconfig_options:
@@ -135,6 +135,12 @@ sensor:
   - platform: levoitvital
     airquality_score:
       name: "Air quality score"
+      device_class: "aqi"
+      state_class: measurement
+      unit_of_measurement: "%"
+  - platform: levoitvital
+    air_quality_index:
+      name: "Air quality index"
       device_class: "aqi"
       state_class: measurement
       unit_of_measurement: "AQI"
