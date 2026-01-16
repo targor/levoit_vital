@@ -7,9 +7,11 @@
 #include "switch/levoit_vital_switch.h"
 #include "select/levoit_vital_select.h"
 #include "sensor/levoit_vital_sensor.h"
+#include "binary_sensor/levoit_vital_binary_sensor.h"
 #include "number/levoit_vital_number.h"
 #include "button/levoit_vital_button.h"
 #include "text_sensor/levoit_vital_text_sensor.h"
+#include "fan/levoit_vital_fan.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "settings.h"
@@ -68,17 +70,12 @@ namespace esphome
                 this->select_automode = select;
                 break;
             }
-            case FANLEVEL:
-            {
-                this->select_fanlevel = select;
-                break;
             }
-            case FANMODE:
-            {
-                this->select_fanmode = select;
-                break;
-            }
-            }
+        }
+
+        void LevoitVital::set_fan(LevoitFan *fan)
+        {
+            this->fan_level = fan;
         }
 
         void LevoitVital::set_sensor(LevoitSensor *sensor, LevoitSensorPurpose purpose)
@@ -93,6 +90,23 @@ namespace esphome
             case AIRQUALITY_SCORE:
             {
                 this->airquality_score = sensor;
+                break;
+            }
+            case AIR_QUALITY_INDEX:
+            {
+                this->air_quality_index = sensor;
+                break;
+            }
+            }
+        }
+
+        void LevoitVital::set_binary_sensor(LevoitBinarySensor *sensor, LevoitBinarySensorPurpose purpose)
+        {
+            switch (purpose)
+            {
+            case LIGHT_DETECTED:
+            {
+                this->light_detected = sensor;
                 break;
             }
             }
@@ -301,61 +315,83 @@ namespace esphome
                         this->light_detect_switch->publish_state(settings.lightDetection);
                     }
 
-                    if (this->select_fanmode && checkValChanged(settings.fanMode, "fanMode", msg[23]))
+                    if (this->light_detected && checkValChanged(settings.lightDetected, "lightDetected", msg[74]))
+                    {
+                        // 0=light detected, 1=no light, so invert for boolean sensor
+                        this->light_detected->publish_state(settings.lightDetected == 0 ? 1 : 0);
+                    }
+
+                    // Update fan preset mode based on device status
+                    if (this->fan_level && checkValChanged(settings.fanMode, "fanMode", msg[23]))
                     {
                         switch (settings.fanMode)
                         {
                         case 0:
                         {
-                            this->select_fanmode->publish_state("Manual");
+                            this->fan_level->update_preset_mode("Manual");
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 1:
                         {
-                            this->select_fanmode->publish_state("Sleep");
+                            this->fan_level->update_preset_mode("Sleep");
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 2:
                         {
-                            this->select_fanmode->publish_state("Automatic");
+                            this->fan_level->update_preset_mode("Automatic");
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 3:
                         {
-                            this->select_fanmode->publish_state("Pet");
+                            this->fan_level->update_preset_mode("Pet");
+                            this->fan_level->publish_state();
                             break;
                         }
                         }
                     }
 
-                    if (this->select_fanlevel && checkValChanged(settings.fanLevel, "fanLevel", msg[26]))
+                    if (this->fan_level && checkValChanged(settings.fanLevel, "fanLevel", msg[26]))
                     {
                         switch (settings.fanLevel)
                         {
                         case 0:
                         case 255:
                         {
-                            this->select_fanlevel->publish_state("NOT SET");
+                            // Fan off or not set
+                            this->fan_level->state = false;
+                            this->fan_level->speed = 0;
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 1:
                         {
-                            this->select_fanlevel->publish_state("1");
+                            this->fan_level->state = true;
+                            this->fan_level->speed = 1;
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 2:
                         {
-                            this->select_fanlevel->publish_state("2");
+                            this->fan_level->state = true;
+                            this->fan_level->speed = 2;
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 3:
                         {
-                            this->select_fanlevel->publish_state("3");
+                            this->fan_level->state = true;
+                            this->fan_level->speed = 3;
+                            this->fan_level->publish_state();
                             break;
                         }
                         case 4:
                         {
-                            this->select_fanlevel->publish_state("4");
+                            this->fan_level->state = true;
+                            this->fan_level->speed = 4;
+                            this->fan_level->publish_state();
                             break;
                         }
                         }
@@ -390,9 +426,15 @@ namespace esphome
                         this->airquality_level->publish_state(level);
                     }
 
-                    if (this->particle_density && checkValChanged(settings.particleDensity, "particleDensity", msg[47]))
+                    std::uint16_t particleDensityTempValue = parse16BitIntegerValue(msg[47], msg[48]);
+                    if (this->particle_density && checkValChanged16(settings.particleDensity, "particleDensity", particleDensityTempValue))
                     {
                         this->particle_density->publish_state(settings.particleDensity);
+                        if (this->air_quality_index)
+                        {
+                            settings.airQualityIndex = calculateAQI(settings.particleDensity);
+                            this->air_quality_index->publish_state(settings.airQualityIndex);
+                        }
                     }
 
                     if (this->airquality_score && checkValChanged(settings.airQualityScore, "airQualityScore", msg[44]))

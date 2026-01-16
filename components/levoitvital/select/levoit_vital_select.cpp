@@ -33,53 +33,6 @@ namespace esphome
         }
         break;
       }
-      case FANLEVEL:
-      {
-        if (value == "1")
-        {
-          parent_->sendCommand(setDeviceFanLvl1);
-        }
-        else if (value == "2")
-        {
-          parent_->sendCommand(setDeviceFanLvl2);
-        }
-        else if (value == "3")
-        {
-          parent_->sendCommand(setDeviceFanLvl3);
-        }
-        else if (value == "4")
-        {
-          parent_->sendCommand(setDeviceFanLvl4);
-        }
-        else
-        { // in case user selects a not working option like "NOT SET" the state is reset
-          // not implemented yet
-          // auto &settings = Vital200Settings::getInstance();
-          // publish_state(settings.fanLevel);
-        }
-
-        break;
-      }
-      case FANMODE:
-      {
-        if (value == "Manual")
-        {
-          parent_->sendCommand(setFanModeManual);
-        }
-        if (value == "Sleep")
-        {
-          parent_->sendCommand(setFanModeSleep);
-        }
-        else if (value == "Automatic")
-        {
-          parent_->sendCommand(setFanModeAuto);
-        }
-        else if (value == "Pet")
-        {
-          parent_->sendCommand(setFanModePet);
-        }
-        break;
-      }
       }
       ESP_LOGI(TAG, "Selected option: %s", value.c_str());
     }
