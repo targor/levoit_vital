@@ -125,10 +125,10 @@ The TLV payload starts at byte 10. Each entry consists of [Tag][Length][Value by
 |---------|---------|-----|-----------|------------|--------|
 | 0x00 | 10 | 1 | 12 | Unknown 00 | Unknown purpose |
 | 0x01 | 13 | 3 | 15-17 | Unknown 01 | Unknown purpose |
-| 0x02 | 18 | 1 | 20 | Unknown 02 | Unknown purpose |
+| 0x02 | 18 | 1 | 20 | **Power State** | 0=OFF, 1=ON |
 | 0x03 | 21 | 1 | 23 | **Fan Mode** | 0=Manual, 1=Sleep, 2=Auto, 3=Pet |
-| 0x04 | 24 | 1 | 26 | Unknown 04 | Unknown purpose |
-| 0x05 | 27 | 1 | 29 | Unknown 05 | Unknown purpose |
+| 0x04 | 24 | 1 | 26 | **Fan Speed** | 0x01=Very Low (Sleep), 0x02=Low, 0x03=Medium, 0x04=High, 0xFF=OFF |
+| 0x05 | 27 | 1 | 29 | **Last Saved Fan Speed** | Fan speed restored to 0x04 at power-on |
 | 0x06 | 30 | 1 | 32 | **Display State (LED)** | 0=OFF, 1=ON (actual LED state) |
 | 0x07 | 33 | 1 | 35 | **Display Setting** | 0=OFF, 1=ON (user setting) |
 | 0x08 | 36 | 1 | 38 | **Air Filter State** | 0=OK, 1=Replace |
