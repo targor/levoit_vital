@@ -24,10 +24,12 @@ public:
     std::uint8_t displayOnOffState2; // 0=off, 1=on
     std::uint8_t displayOnOffState;  // 0=off, 1=on
     std::uint8_t airQualityLevel;    // 1=very good..4=bad
-    std::uint8_t particleDensity;    // 0-254
+    std::uint16_t particleDensity;   // 0-65535 PM2.5 µg/m³
     std::uint8_t airQualityScore;    // 0 to 100
+    std::uint16_t airQualityIndex;   // 0-500 AQI
     std::uint8_t displayLock;        // 0=off, 1=on
     std::uint8_t lightDetection;     // 0=off, 1=on
+    std::uint8_t lightDetected;      // 0=light detected, 1=no light
     std::uint8_t sleepMode;          // 0=default, 1=custom
     std::uint8_t airfilter_state;    // 0 = clean, 1 = must be replaced
     std::uint16_t powerModeValue;    // time in minutes for the poewer mode (this is a cusom functionality from me, and not part of levoit)
@@ -70,8 +72,9 @@ public:
         displayOnOffState2 = 255;
         displayOnOffState = 255;
         airQualityLevel = 255;
-        particleDensity = 255;
+        particleDensity = 65535; // Initialize to max uint16_t
         airQualityScore = 255;
+        airQualityIndex = 65535; // Initialize to max uint16_t
         displayLock = 255;
         lightDetection = 255;
         sleepMode = 255;

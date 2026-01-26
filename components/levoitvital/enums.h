@@ -15,15 +15,19 @@ namespace esphome
 
         enum LevoitSelectPurpose : uint8_t
         {
-            AUTOMODE,
-            FANLEVEL,
-            FANMODE
+            AUTOMODE
         };
 
         enum LevoitSensorPurpose : uint8_t
         {
             PARTICLE_DENSITY,
-            AIRQUALITY_SCORE
+            AIRQUALITY_SCORE,
+            AIR_QUALITY_INDEX
+        };
+
+        enum LevoitBinarySensorPurpose : uint8_t
+        {
+            LIGHT_DETECTED
         };
 
         enum LevoitTextSensorPurpose : uint8_t

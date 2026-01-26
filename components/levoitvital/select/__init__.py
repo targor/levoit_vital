@@ -8,8 +8,6 @@ DEPENDENCIES = ["levoitvital"]
 REQUIREMENTS = ["ArduinoJson>=6.27.0"]
 
 CONF_AUTOMODE = "automode"
-CONF_FANLEVEL = "fanlevel"
-CONF_FANMODE = "fanmode"
 CONF_OPTIONS = "options"
 
 LevoitSelect = levoit_vital_ns.class_("LevoitSelect", select.Select, cg.Component)
@@ -30,30 +28,6 @@ CONFIG_SCHEMA = cv.Schema(
             }
         )
         .extend(cv.COMPONENT_SCHEMA),
-        cv.Optional(CONF_FANLEVEL): select.select_schema(
-            LevoitSelect, icon=ICON_RADIATOR
-        )
-        .extend(
-            {
-                cv.Optional(
-                    CONF_OPTIONS, default=["1", "2", "3", "4", "NOT SET"]
-                ): cv.ensure_list(cv.string),
-                cv.Optional("optimistic", default=False): cv.boolean,
-            }
-        )
-        .extend(cv.COMPONENT_SCHEMA),
-        cv.Optional(CONF_FANMODE): select.select_schema(
-            LevoitSelect, icon=ICON_RADIATOR
-        )
-        .extend(
-            {
-                cv.Optional(
-                    CONF_OPTIONS, default=["Manual", "Sleep", "Automatic", "Pet"]
-                ): cv.ensure_list(cv.string),
-                cv.Optional("optimistic", default=False): cv.boolean,
-            }
-        )
-        .extend(cv.COMPONENT_SCHEMA),
     }
 )
 
@@ -69,23 +43,3 @@ async def to_code(config):
         )
         cg.add(parent.set_select(var, LevoitSelectPurpose.AUTOMODE))
         await cg.register_component(var, config_automode)
-
-    if config_fanlevel := config.get(CONF_FANLEVEL):
-        var = await select.new_select(
-            config_fanlevel,
-            parent,
-            LevoitSelectPurpose.FANLEVEL,
-            options=config_fanlevel[CONF_OPTIONS],
-        )
-        cg.add(parent.set_select(var, LevoitSelectPurpose.FANLEVEL))
-        await cg.register_component(var, config_fanlevel)
-
-    if config_fanmode := config.get(CONF_FANMODE):
-        var = await select.new_select(
-            config_fanmode,
-            parent,
-            LevoitSelectPurpose.FANMODE,
-            options=config_fanmode[CONF_OPTIONS],
-        )
-        cg.add(parent.set_select(var, LevoitSelectPurpose.FANMODE))
-        await cg.register_component(var, config_fanmode)

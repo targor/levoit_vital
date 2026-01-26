@@ -26,7 +26,7 @@ esp32:
   board: esp32-c3-devkitm-1
   variant: esp32c3
   flash_size: 4MB
-  cpu_frequency: 160Mhz
+  # cpu_frequency: 160Mhz
   framework:
     type: esp-idf
     sdkconfig_options:
@@ -68,7 +68,7 @@ esp32:
 #   mode: quad  # quad for N8R2 and octal for N16R8
 #   speed: 80MHz
 
-#use this for use with git
+# use this for use with git
 external_components:
   - source: github://targor/levoit_vital
     refresh: 0d # optional
@@ -135,9 +135,20 @@ sensor:
   - platform: levoitvital
     airquality_score:
       name: "Air quality score"
+      device_class: ""
+      state_class: measurement
+      unit_of_measurement: "%"
+  - platform: levoitvital
+    air_quality_index:
+      name: "Air quality index"
       device_class: "aqi"
       state_class: measurement
-      unit_of_measurement: "AQI"
+
+binary_sensor:
+  - platform: levoitvital
+    light_detected:
+      name: "Light detected"
+      device_class: "light"
 
 text_sensor:
   - platform: levoitvital
@@ -173,6 +184,12 @@ button:
     powermode:
       name: "Powermode"
 
+fan:
+  - platform: levoitvital
+    id: levoit_fan
+    name: "Fan"
+    # Preset modes: Manual, Sleep, Automatic, Pet
+
 select:
   - platform: levoitvital
     automode:
@@ -182,22 +199,3 @@ select:
         - "Default"
         - "Quiet"
         - "Efficient"
-  - platform: levoitvital
-    fanlevel:
-      name: "FanLevel"
-      optimistic: true
-      options:
-        - "1"
-        - "2"
-        - "3"
-        - "4"
-        - "NOT SET"
-  - platform: levoitvital
-    fanmode:
-      name: "FanMode"
-      optimistic: true
-      options:
-        - "Manual"
-        - "Sleep"
-        - "Automatic"
-        - "Pet"
