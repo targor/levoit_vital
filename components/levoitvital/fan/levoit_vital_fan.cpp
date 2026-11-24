@@ -9,8 +9,11 @@ namespace esphome
 
     static const char *const TAG = "levoit_vital.fan";
 
-    void LevoitFan::setup() 
+    void LevoitFan::setup()
     {
+        // Preset modes are stored on the Fan entity (ESPHome 2026.11+) and wired into traits in get_traits()
+        this->set_supported_preset_modes({PRESET_MODE_MANUAL, PRESET_MODE_SLEEP, PRESET_MODE_AUTOMATIC, PRESET_MODE_PET});
+
         // Initialize fan as off with no speed
         this->state = false;
         this->speed = 0;
@@ -28,7 +31,7 @@ namespace esphome
         auto traits = fan::FanTraits();
         traits.set_speed(true);
         traits.set_supported_speed_count(4); // 4 speed levels (1, 2, 3, 4)
-        traits.set_supported_preset_modes({PRESET_MODE_MANUAL, PRESET_MODE_SLEEP, PRESET_MODE_AUTOMATIC, PRESET_MODE_PET});
+        this->wire_preset_modes_(traits);
         return traits;
     }
 
