@@ -5,6 +5,19 @@ Esphome component for the Levoit Vital **200S**, **200S pro** and **100S**.
 As there was no component or firmware or anything for the Levoit Vital 200S i reverse engineered most of the protocol and made a esphome componend to use.
 - This should also work with the Levoit Vital 200S Pro, as (i asked the manufacturer) the pro version is the exact same device but in another color.
 - If you want to go deeper, i provided my current reverse engineering data ([command table.xlsx](https://github.com/user-attachments/files/23830099/command.table.xlsx)).
+- **Protocol Documentation**: See [PROTOCOL.md](PROTOCOL.md) for complete UART protocol specification, including message structure, command reference, status field mappings, and checksum calculation.
+
+## Features
+
+- **Fan Component** with speed levels (1-4) and preset modes:
+  - **Manual**: Direct fan speed control
+  - **Sleep**: Quiet operation mode
+  - **Automatic**: AI-driven fan speed based on air quality
+  - **Pet**: Optimized for pet environments
+- **Sensors**: PM2.5 particle density, air quality score/index, filter status
+  - **Light detected**: Binary sensor that reports ambient light detection (only works when the "Light detection" switch is enabled)
+- **Controls**: Device power, display settings, light detection
+- **Automation Modes**: Auto mode with Default/Quiet/Efficient presets
 
 
 # How to?
@@ -54,76 +67,10 @@ I Used an older USB to Serial Adapter and could not backup with full Speed. If o
  After Dumping you can upload the firmware. Currently i do not provide a binary file for you, but yout can build and upload the component with esphome. 
  - The only thing you must configure in the yaml file are the firts 3 ids (or maybe leave it the way they are) and your wifi/ap data.
 
+## Screenshots
 
+### Controls
+![Controls](images/controls.png)
 
-
-## Optional fan integration
-
-If you want you can add this template to your home assitant to enable the fan power and level as a Homeassistant fan.
-Thanks to Scags104 for the suggestion.
-
-ids and names should be modified accordingly.
-```
-- fan:
-  - unique_id: brap22_fan 
-    name: "BRAP22 Fan"
-    state: "{{ states('switch.brap22_power') }}"
-    percentage: >-
-      {% if is_state('switch.brap22_power', 'on') %}
-        {% set level = states('select.brap22_fanlevel') | int(0) %}
-        {{ level * 25 if level in [1,2,3,4] else 0 }}
-      {% else %}
-        0
-      {% endif %}
-    preset_mode: >-
-      {% if is_state('switch.brap22_power', 'on') %}
-        {{ states('select.brap22_fanmode') }}
-      {% else %}
-        None
-      {% endif %}
-    preset_modes:
-      - "Manual"
-      - "Automatic"
-      - "Sleep"
-      - "Pet"
-    speed_count: 4
-    optimistic: true
-    turn_on:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.brap22_power
-      - service: select.select_option
-        target:
-          entity_id: select.brap22_fanmode
-        data:
-          option: "Manual"
-      - service: select.select_option
-        target:
-          entity_id: select.brap22_fanlevel
-        data:
-          option: "1"
-    turn_off:
-      - service: switch.turn_off
-        target:
-          entity_id: switch.brap22_power
-    set_percentage:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.brap22_power
-      - service: select.select_option
-        target:
-          entity_id: select.brap22_fanlevel
-        data:
-          option: >-
-            {% set pct = percentage | int %}
-            {{ 1 if pct <= 25 else 2 if pct <= 50 else 3 if pct <= 75 else 4 }}
-    set_preset_mode:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.brap22_power
-      - service: select.select_option
-        target:
-          entity_id: select.brap22_fanmode
-        data:
-          option: "{{ preset_mode }}"
-```
+### Sensors
+![Sensors](images/sensors.png)
